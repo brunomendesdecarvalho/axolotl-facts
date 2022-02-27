@@ -7,7 +7,7 @@ import '../../../../../core/enums/request_state.dart';
 import '../../../../../core/widgets/loader_widget.dart';
 
 import '../fact_controller.dart';
-import '../widgets/fact_body.dart';
+import '../widgets/fact_widget.dart';
 
 class FactPage extends StatefulWidget {
   const FactPage({Key? key}) : super(key: key);
@@ -29,15 +29,23 @@ class _FactPageState extends State<FactPage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: RxBuilder(builder: (context) {
-        if (controller.state.value == RequestState.SUCCESS) {
-          return FactWidget(
-              controller: controller, width: width, height: height);
-        } else {
-          return LoaderWidget(key: Key('factLoader'));
-        }
-      }),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: SafeArea(
+          child: RxBuilder(builder: (context) {
+            if (controller.state.value == RequestState.SUCCESS) {
+              return FactWidget(
+                  imageUrl: controller.fact.value.url ?? '',
+                  fact: controller.fact.value.facts ?? '',
+                  width: width,
+                  height: height);
+            } else {
+              return LoaderWidget(key: Key('factLoader'));
+            }
+          }),
+        ),
+      ),
     );
   }
 }
